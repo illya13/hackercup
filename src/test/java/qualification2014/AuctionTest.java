@@ -1,14 +1,15 @@
-package qualification;
+package qualification2014;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import qualification.Auction;
 
 import java.io.*;
 
 public class AuctionTest {
-    private static final String INPUTDIR = "src/main/resources/qualification";
+    private static final String INPUTDIR = "src/main/resources/qualification2014";
 
     private FileInputStream is;
     private OutputStream os;

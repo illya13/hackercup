@@ -1,19 +1,20 @@
-package qualification;
+package qualification2014;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import qualification.AlphabetSoup;
 
 import java.io.*;
 
-public class BillboardsTest {
+public class AlphabetSoupTest {
     private static final String INPUTDIR = "src/main/resources/qualification";
 
     private FileInputStream is;
     private OutputStream os;
 
-    private Billboards problem;
+    private AlphabetSoup problem;
     private long time;
 
     @Before
@@ -34,18 +35,18 @@ public class BillboardsTest {
 
     @Test
     public void testSample() throws Exception {
-        is = initInputStream("A-sample.in");
+        is = initInputStream("C-sample.in");
 
-        problem = new Billboards(is, os);
+        problem = new AlphabetSoup(is, os);
         problem.solve();
         problem.close();
 
         Assert.assertEquals("" +
-                "Case #1: 3\n" +
-                "Case #2: 10\n" +
-                "Case #3: 2\n" +
-                "Case #4: 8\n" +
-                "Case #5: 7\n",
+                "Case #1: 1\n" +
+                "Case #2: 2\n" +
+                "Case #3: 1\n" +
+                "Case #4: 0\n" +
+                "Case #5: 1\n",
                 os.toString());
     }
 
