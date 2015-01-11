@@ -114,7 +114,7 @@ public class NewYearsResolution {
         private Food[] food;
 
         public Foods(Scanner scanner) {
-            // 1 ≤ N ≤ 20
+            // 1 <= N <= 20
             int n = scanner.nextInt();
             food = new Food[n];
             for (int j = 0; j < n; j++) {
