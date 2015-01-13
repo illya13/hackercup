@@ -119,7 +119,7 @@ public class CookingTheBooks {
         swapped[i] = swapped[j];
         swapped[j] = swap;
 
-        return new Integer(new String(swapped));
+        return Integer.parseInt(String.valueOf(swapped));
     }
 }
 
