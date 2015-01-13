@@ -142,6 +142,14 @@ public class LaserMaze {
                         bfsNodeCache[i][j][turretRotation.ordinal()] = new BFSNode(pointCache[i][j], turretRotation);
         }
 
+        public Point getInstanceOfPoint(int x, int y) {
+            return pointCache[x][y];
+        }
+
+        public BFSNode getInstanceOfBFSNode(Point point, TurretRotation turretRotation) {
+            return bfsNodeCache[point.x][point.y][turretRotation.ordinal()];
+        }
+
         private void fillMaze(int i, int j, char c) {
             maze[i][j] = c;
             switch (c) {
@@ -217,14 +225,6 @@ public class LaserMaze {
                     }
                 }
             }
-        }
-
-        public Point getInstanceOfPoint(int x, int y) {
-            return pointCache[x][y];
-        }
-
-        public BFSNode getInstanceOfBFSNode(Point point, TurretRotation turretRotation) {
-            return bfsNodeCache[point.x][point.y][turretRotation.ordinal()];
         }
 
         // bfs node

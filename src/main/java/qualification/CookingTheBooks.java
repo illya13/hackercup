@@ -102,7 +102,7 @@ public class CookingTheBooks {
         char[] chars = n.toString().toCharArray();
         for (int i=0; i<chars.length; i++) {
             for (int j=i+1; j<chars.length; j++) {
-                if ((i ==0) && (chars[j] == '0')) continue;
+                if ((i == 0) && (chars[j] == '0')) continue;
 
                 int candidate = copySwapAndConvert(chars, i, j);
                 max = (candidate > max) ? candidate : max;
