@@ -112,6 +112,8 @@ public class LaserMaze {
             maze = new char[m][n];
             walls = new HashSet<>(m * n);
 
+            initCashes();
+
             // ignore end of line
             scanner.nextLine();
             for (int i = 0; i < m; i++) {
@@ -120,6 +122,24 @@ public class LaserMaze {
                     fillMaze(i, j, line.charAt(j));
                 }
             }
+        }
+
+        // caches to avoid unnecessary instances of the same logical entities
+        // also Sets and Maps work with object references
+        private Point[][] pointCache;
+        private BFSNode[][][] bfsNodeCache;
+
+        private void initCashes() {
+            pointCache = new Point[m][n];
+            for (int i=0; i<m; i++)
+                for (int j=0; j<n; j++)
+                    pointCache[i][j] = new Point(i, j);
+
+            bfsNodeCache = new BFSNode[m][n][4];
+            for (int i=0; i<m; i++)
+                for (int j=0; j<n; j++)
+                    for (TurretRotation turretRotation: TurretRotation.values())
+                        bfsNodeCache[i][j][turretRotation.ordinal()] = new BFSNode(pointCache[i][j], turretRotation);
         }
 
         private void fillMaze(int i, int j, char c) {
@@ -199,26 +219,12 @@ public class LaserMaze {
             }
         }
 
-        private Map<Point, Point> pointCache = new HashMap<>();
         public Point getInstanceOfPoint(int x, int y) {
-            Point p = new Point();
-            p.x = x;
-            p.y = y;
-
-            if (!pointCache.containsKey(p))
-                pointCache.put(p, p);
-            return pointCache.get(p);
+            return pointCache[x][y];
         }
 
-        private Map<BFSNode, BFSNode> bfsNodeCache = new HashMap<>();
         public BFSNode getInstanceOfBFSNode(Point point, TurretRotation turretRotation) {
-            BFSNode s = new BFSNode();
-            s.point = point;
-            s.turretRotation = turretRotation;
-
-            if (!bfsNodeCache.containsKey(s))
-                bfsNodeCache.put(s, s);
-            return bfsNodeCache.get(s);
+            return bfsNodeCache[point.x][point.y][turretRotation.ordinal()];
         }
 
         // bfs node
@@ -226,24 +232,9 @@ public class LaserMaze {
             private Point point;
             private TurretRotation turretRotation;
 
-            @Override
-            public boolean equals(Object o) {
-                if (this == o) return true;
-                if (!(o instanceof BFSNode)) return false;
-
-                BFSNode BFSNode = (BFSNode) o;
-
-                if (!point.equals(BFSNode.point)) return false;
-                if (turretRotation != BFSNode.turretRotation) return false;
-
-                return true;
-            }
-
-            @Override
-            public int hashCode() {
-                int result = point.hashCode();
-                result = 31 * result + turretRotation.hashCode();
-                return result;
+            public BFSNode(Point point, TurretRotation turretRotation) {
+                this.point = point;
+                this.turretRotation = turretRotation;
             }
 
             @Override
@@ -255,6 +246,11 @@ public class LaserMaze {
         // point in maze
         private class Point {
             int x, y;
+
+            private Point(int x, int y) {
+                this.x = x;
+                this.y = y;
+            }
 
             public Iterable<BFSNode> adj(TurretRotation turretRotation) {
                 TurretRotation next = turretRotation.next();
@@ -274,26 +270,6 @@ public class LaserMaze {
             private void checkAndAdd(TurretRotation next, List<BFSNode> result, Point p) {
                 if ((!walls.contains(p)) && (!turrets.fire(p, next)))
                     result.add(getInstanceOfBFSNode(p, next));
-            }
-
-            @Override
-            public boolean equals(Object o) {
-                if (this == o) return true;
-                if (!(o instanceof Point)) return false;
-
-                Point point = (Point) o;
-
-                if (x != point.x) return false;
-                if (y != point.y) return false;
-
-                return true;
-            }
-
-            @Override
-            public int hashCode() {
-                int result = x;
-                result = 31 * result + y;
-                return result;
             }
 
             @Override
@@ -421,8 +397,8 @@ public class LaserMaze {
 
         // turrets in all possible rotation steps
         private class Turrets {
-            private HashMap<TurretRotation, List<Turret>> turretRotationMap;
-            private HashMap<TurretRotation, Set<Point>> turretFireMap;
+            private Map<TurretRotation, List<Turret>> turretRotationMap;
+            private Map<TurretRotation, Set<Point>> turretFireMap;
 
             public Turrets() {
                 turretRotationMap = new HashMap<>(4);
