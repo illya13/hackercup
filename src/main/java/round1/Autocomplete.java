@@ -145,8 +145,6 @@ public class Autocomplete {
      * Problem part
      */
 
-    Node root;
-
     public void solve(IOUtils ioUtils) {
         // 1 <= T <= 100
         int t = ioUtils.scanner().nextInt();
@@ -156,7 +154,7 @@ public class Autocomplete {
             int n = ioUtils.scanner().nextInt();
 
             String[] words = new String[n];
-            root = new Tree();
+            Node root = new Tree();
 
             int count = 0;
             for (int j=0; j<n; j++) {
