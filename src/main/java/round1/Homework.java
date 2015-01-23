@@ -164,17 +164,26 @@ public class Homework {
     }
 
     private void initPrimacity(int N) {
-        primacity = sieveOfEratosthenes(N);
+        boolean[] isPrime = sieveOfEratosthenes(N);
+
+        primacity = new int[N+1];
+        for (int p = 2; p <= N; p++) {
+            if (!isPrime[p]) {
+                continue;
+            }
+            for (int i = p; i <= N; i += p) {
+                primacity[i]++;
+            }
+        }
     }
 
-    private int[] sieveOfEratosthenes(int N) {
+    private boolean[] sieveOfEratosthenes(int N) {
+        primacity = new int[N+1];
+
         // initially assume all integers are prime
-        int[] primacity = new int[N + 1];
         boolean[] isPrime = new boolean[N + 1];
-        for (int i = 2; i <= N; i++) {
+        for (int i = 2; i <= N; i++)
             isPrime[i] = true;
-            primacity[i] = 0;
-        }
 
         // mark non-primes <= N using Sieve of Eratosthenes
         for (int i = 2; i*i <= N; i++) {
@@ -182,13 +191,14 @@ public class Homework {
             // if i is prime, then mark multiples of i as nonprime
             // suffices to consider mutiples i, i+1, ..., N/i
             if (isPrime[i]) {
-                for (int j = 1; i*j <= N; j++) {
+                primacity[i]++;
+                for (int j = i; i*j <= N; j++) {
                     isPrime[i*j] = false;
                     primacity[i*j]++;
                 }
             }
         }
-        return primacity;
+        return isPrime;
     }
 
     private int solve(int a, int b, int k) {
