@@ -1,4 +1,4 @@
-package round1;
+package round1_2014;
 
 import java.io.*;
 import java.util.*;
@@ -7,7 +7,7 @@ public class CardGame {
     // general part
     private static final String INPUTDIR = "src/main/resources";
     private static final String OUTPUTDIR = "target/output";
-    private static final String ROUND = "round1";
+    private static final String ROUND = "round1_2014";
 
     private static final String SAMPLE = "A-sample.in";
     private static final String INPUT = "A-input.in";

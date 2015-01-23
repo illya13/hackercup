@@ -9,7 +9,7 @@ import round1_2012.SquishedStatus;
 import java.io.*;
 
 public class SquishedStatusTest {
-    private static final String INPUTDIR = "src/main/resources/round1";
+    private static final String INPUTDIR = "src/main/resources/round1_2014";
 
     private FileInputStream is;
     private OutputStream os;

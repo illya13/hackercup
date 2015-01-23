@@ -7,7 +7,7 @@ public class RecoverTheSequence {
     // general part
     private static final String INPUTDIR = "src/main/resources";
     private static final String OUTPUTDIR = "target/output";
-    private static final String ROUND = "round1";
+    private static final String ROUND = "round1_2012";
 
     private static final String SAMPLE = "B-sample.in";
     private static final String INPUT = "B-input.in";

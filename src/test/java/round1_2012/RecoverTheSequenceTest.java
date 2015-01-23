@@ -12,7 +12,7 @@ import java.util.Queue;
 import java.util.Stack;
 
 public class RecoverTheSequenceTest {
-    private static final String INPUTDIR = "src/main/resources/round1";
+    private static final String INPUTDIR = "src/main/resources/round1_2014";
 
     private FileInputStream is;
     private OutputStream os;
