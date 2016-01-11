@@ -1,9 +1,11 @@
 package qualification;
 
 import java.io.*;
+import java.math.BigInteger;
 import java.util.*;
+import java.util.concurrent.Callable;
 
-public class CookingTheBooks {
+public class BoomerangConstellations {
     // general part
     private static final String INPUTDIR = "src/main/resources";
     private static final String OUTPUTDIR = "target/output";
@@ -15,7 +17,7 @@ public class CookingTheBooks {
     private Scanner scanner;
     private PrintWriter writer;
 
-    public CookingTheBooks(InputStream is, OutputStream os) {
+    public BoomerangConstellations(InputStream is, OutputStream os) {
         scanner = new Scanner(is);
         writer = new PrintWriter(os);
     }
@@ -29,7 +31,7 @@ public class CookingTheBooks {
         InputStream is = initInputStream(fileName);
         OutputStream os = initOutputStream(fileName, isConsole);
 
-        CookingTheBooks problem = new CookingTheBooks(is, os);
+        BoomerangConstellations problem = new BoomerangConstellations(is, os);
         problem.solve();
         problem.close();
 
@@ -83,43 +85,76 @@ public class CookingTheBooks {
      * Solve the problem
      */
     public void solve() {
-        // 1 ≤ T ≤ 100
+        // 1 ≤ T ≤ 50
         int t = scanner.nextInt();
         scanner.nextLine();
 
         for (int i = 1; i <= t; i++) {
-            // 0 <= N <= 999999999
-            // N will never begin with a leading 0 unless N = 0
-            // Integer.MAX_VALUE = 2147483647
+            // 0 <= N <= 2000
             int n = scanner.nextInt();
-            writer.printf("Case #%1$d: %2$s\n", i, solve(n));
+            Star[] stars = new Star[n];
+            for (int j = 0; j < n; j++) {
+                int x = scanner.nextInt();
+                int y = scanner.nextInt();
+                stars[j] = new Star(x, y);
+            }
+            writer.printf("Case #%1$d: %2$d\n", i, solve(stars));
         }
     }
 
-    private String solve(Integer n) {
-        int max = n, min = n;
+    private long solve(Star[] stars) {
+        // max value: 2000 * (max c_n2)
+        long count = 0;
 
-        char[] chars = n.toString().toCharArray();
-        for (int i=0; i<chars.length; i++) {
-            for (int j=i+1; j<chars.length; j++) {
-                if ((i == 0) && (chars[j] == '0')) continue;
+        // for each star
+        for (int a = 0; a < stars.length; a++) {
+            // collect map:
+            //      segment length -> count
+            Map<Long, Integer> lenghtMap = new HashMap<>();
 
-                int candidate = copySwapAndConvert(chars, i, j);
-                max = (candidate > max) ? candidate : max;
-                min = (candidate < min) ? candidate : min;
+            for (int b = 0; b < stars.length; b++) {
+                if (a == b)
+                    continue;
+
+                long distance = stars[a].getSquareDistanceTo(stars[b]);
+                Integer segments = lenghtMap.get(distance);
+                if (segments == null) {
+                    segments = 0;
+                }
+                lenghtMap.put(distance, ++segments);
+            }
+
+            for (Map.Entry<Long, Integer> entry: lenghtMap.entrySet()) {
+                int segments = entry.getValue();
+                count += c_n2(segments);
             }
         }
-        return String.format("%1$d %2$d", min, max);
+        return count;
     }
 
-    private int copySwapAndConvert(char[] array, int i, int j) {
-        char[] swapped = Arrays.copyOf(array, array.length);
+    // max n = 2000
+    // mas c_n2 = 2000 * 1000
+    private long c_n2(int n) {
+        return n * (n-1) / 2;
+    }
 
-        char swap = swapped[i];
-        swapped[i] = swapped[j];
-        swapped[j] = swap;
+    private class Star {
+        private int x, y;
 
-        return Integer.parseInt(String.valueOf(swapped));
+        public Star(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        @Override
+        public String toString() {
+            return "(" + x +
+                    "," + y + ')';
+        }
+
+        public long getSquareDistanceTo(Star s) {
+            return (x-s.x)*(x-s.x) + (y-s.y)*(y-s.y);
+        }
     }
 }
 
