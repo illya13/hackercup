@@ -7,13 +7,13 @@ import org.junit.Test;
 
 import java.io.*;
 
-public class NewYearsResolutionTest {
+public class ThePriceIsCorrectTest {
     private static final String INPUTDIR = "src/main/resources/qualification";
 
     private FileInputStream is;
     private OutputStream os;
 
-    private NewYearsResolution problem;
+    private ThePriceIsCorrect problem;
     private long time;
 
     @Before
@@ -34,18 +34,18 @@ public class NewYearsResolutionTest {
 
     @Test
     public void testSample() throws Exception {
-        is = initInputStream("B-sample.in");
+        is = initInputStream("C-sample.in");
 
-        problem = new NewYearsResolution(is, os);
+        problem = new ThePriceIsCorrect(is, os);
         problem.solve();
         problem.close();
 
         Assert.assertEquals("" +
-                        "Case #1: yes\n" +
-                        "Case #2: no\n" +
-                        "Case #3: yes\n" +
-                        "Case #4: no\n" +
-                        "Case #5: yes\n",
+                        "Case #1: 10\n" +
+                        "Case #2: 0\n" +
+                        "Case #3: 3\n" +
+                        "Case #4: 9\n" +
+                        "Case #5: 18\n",
                 os.toString());
     }
 

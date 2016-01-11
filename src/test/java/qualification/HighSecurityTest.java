@@ -1,20 +1,19 @@
-package qualification2015;
+package qualification;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import qualification.BoomerangConstellations;
 
 import java.io.*;
 
-public class CookingTheBooksTest {
+public class HighSecurityTest {
     private static final String INPUTDIR = "src/main/resources/qualification";
 
     private FileInputStream is;
     private OutputStream os;
 
-    private BoomerangConstellations problem;
+    private HighSecurity problem;
     private long time;
 
     @Before
@@ -35,28 +34,18 @@ public class CookingTheBooksTest {
 
     @Test
     public void testSample() throws Exception {
-        is = initInputStream("A-sample.in");
+        is = initInputStream("B-sample.in");
 
-        problem = new BoomerangConstellations(is, os);
+        problem = new HighSecurity(is, os);
         problem.solve();
         problem.close();
 
         Assert.assertEquals("" +
-                        "Case #1: 13524 51324\n" +
-                        "Case #2: 798 987\n" +
-                        "Case #3: 123 321\n" +
-                        "Case #4: 10 10\n" +
-                        "Case #5: 5 5\n" +
-                        "Case #6: 798 987\n" +
-                        "Case #7: 123 312\n"+
-                        "Case #8: 123456789 923456781\n" +
-                        "Case #9: 187654329 987654321\n" +
-                        "Case #10: 103456789 903456781\n" +
-                        "Case #11: 107654329 970654321\n" +
-                        "Case #12: 103456789 904356781\n" +
-                        "Case #13: 106754329 976054321\n" +
-                        "Case #14: 100356784 804356710\n" +
-                        "Case #15: 206754390 976054320\n",
+                        "Case #1: 3\n" +
+                        "Case #2: 3\n" +
+                        "Case #3: 2\n" +
+                        "Case #4: 5\n" +
+                        "Case #5: 6\n",
                 os.toString());
     }
 

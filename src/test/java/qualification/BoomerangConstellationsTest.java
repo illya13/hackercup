@@ -7,13 +7,13 @@ import org.junit.Test;
 
 import java.io.*;
 
-public class LaserMazeTest {
+public class BoomerangConstellationsTest {
     private static final String INPUTDIR = "src/main/resources/qualification";
 
     private FileInputStream is;
     private OutputStream os;
 
-    private LaserMaze problem;
+    private BoomerangConstellations problem;
     private long time;
 
     @Before
@@ -34,20 +34,18 @@ public class LaserMazeTest {
 
     @Test
     public void testSample() throws Exception {
-        is = initInputStream("C-sample.in");
+        is = initInputStream("A-sample.in");
 
-        problem = new LaserMaze(is, os);
+        problem = new BoomerangConstellations(is, os);
         problem.solve();
         problem.close();
 
         Assert.assertEquals("" +
-                        "Case #1: 6\n" +
-                        "Case #2: 6\n" +
-                        "Case #3: 6\n" +
-                        "Case #4: 4\n" +
-                        "Case #5: 3\n" +
-                        "Case #6: impossible\n" +
-                        "Case #7: 8\n",
+                "Case #1: 0\n" +
+                "Case #2: 4\n" +
+                "Case #3: 4\n" +
+                "Case #4: 3\n" +
+                "Case #5: 12\n",
                 os.toString());
     }
 
