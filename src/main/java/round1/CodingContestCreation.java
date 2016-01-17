@@ -1,9 +1,10 @@
 package round1;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.Scanner;
 
-public class Autocomplete {
+public class CodingContestCreation {
     public static final String INPUTDIR = "src/main/resources";
     public static final String OUTPUTDIR = "target/output";
     public static final String ROUND = "round1";
@@ -13,8 +14,8 @@ public class Autocomplete {
      */
 
     private enum Input {
-        SAMPLE("B-sample.in", true),
-        INPUT("B-input.in", false);
+        SAMPLE("A-sample.in", true),
+        INPUT("A-input.in", false);
         
         private String fileName;
         private boolean useConsole;
@@ -131,7 +132,7 @@ public class Autocomplete {
     }
 
     private static void runTest(Input input) throws Exception {
-        Autocomplete problem = new Autocomplete();
+        CodingContestCreation problem = new CodingContestCreation();
         IOUtils ioUtils = new IOUtilsImpl();
 
         ioUtils.init(input);
@@ -144,107 +145,62 @@ public class Autocomplete {
      */
 
     public void solve(IOUtils ioUtils) {
-        // 1 <= T <= 100
+        // 1 ≤ T ≤ 50
         int t = ioUtils.scanner().nextInt();
 
         for (int i = 1; i <= t; i++) {
-            // 1<= N <= 100,000
+            // 1 ≤ N ≤ 100,000
             int n = ioUtils.scanner().nextInt();
 
-            String[] words = new String[n];
-            Node root = new Tree();
-
-            int count = 0;
+            // 1 ≤ Di ≤ 100
+            int[] d = new int[n];
             for (int j=0; j<n; j++) {
-                words[j] = ioUtils.scanner().next();
-                root.insert(words[j], 0);
-                count += root.find(words[j], 0);
+                d[j] = ioUtils.scanner().nextInt();
+            }
+            ioUtils.writer().printf("Case #%1$d: %2$d\n", i, solve(d));
+        }
+    }
+
+    private int solve(int[] d) {
+        int total = 0;
+        int current = 1;
+        for (int i=1; i<d.length; i++) {
+            if (current != 0) {
+                // start new series because of data
+                if (d[i] <= d[i - 1]) {
+                    total += 4 - current;
+                    current = 0;
+                }
+
+                // insert element
+                if (d[i] - d[i - 1] > 10) {
+                    d = newD(d, i);
+                    total++;
+                }
             }
 
-            ioUtils.writer().printf("Case #%1$d: %2$d\n", i, count);
-        }
-    }
+            current++;
 
-    private interface Node {
-        public Node insert(String word, int index);
-        public int find(String word, int index);
-    }
-
-    public static class Leaf implements Node {
-        private String word;
-        private int index;
-
-        public Leaf(String word, int index) {
-            this.word = word;
-            this.index = index;
-        }
-
-        public Node insert(String word, int index) {
-            Tree tree = new Tree(this.word.charAt(this.index));
-
-            tree.insert(this.word, this.index+1);
-            tree.insert(word, index);
-            return tree;
-        }
-
-        public int find(String word, int index) {
-            return 0;
-        }
-
-        @Override
-        public String toString() {
-            return "Leaf{" + word.charAt(index) + "} " + word;
-        }
-    }
-
-    private static class Tree implements Node {
-        private char ch;
-        private Node[] nodes;
-
-        public Tree() {
-            this('/');
-        }
-
-        public Tree(char ch) {
-            nodes = new Node['z'-'a'+1];
-            for (char c='a'; c<='z'; c++)
-                nodes[reindex(c)] = null;
-
-            this.ch = ch;
-        }
-
-        public Node insert(String word, int index) {
-            if (index == word.length())
-                return this;
-
-            int i = reindex(word.charAt(index));
-            if (nodes[i] == null) {
-                nodes[i] = new Leaf(word, index);
-            } else {
-                nodes[i] = nodes[i].insert(word, index+1);
+            // start new series because current is full
+            if (current == 4) {
+                current = 0;
             }
-            return this;
         }
 
-        public int find(String word, int index) {
-            if (index == word.length())
-                return 0;
-
-            int i = reindex(word.charAt(index));
-            if (nodes[i] == null)
-                return 0;
-
-            return nodes[i].find(word, index+1) + 1;
+        if (current != 0) {
+            total += 4 - current;
         }
+        return total;
+    }
 
-        private static int reindex(char c) {
-            return c - 'a';
-        }
+    private int[] newD(int[] d, int i) {
+        int[] result = new int[d.length+1];
+        System.arraycopy(d, 0, result, 0, i);
 
-        @Override
-        public String toString() {
-            return "Tree{" + ch + '}';
-        }
+        result[i] = d[i-1] + 10;
+
+        System.arraycopy(d, i, result, i + 1, d.length - i);
+        return result;
     }
 }
 

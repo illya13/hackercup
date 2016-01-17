@@ -1,9 +1,9 @@
 package round1;
 
 import java.io.*;
-import java.util.Scanner;
+import java.util.*;
 
-public class Homework {
+public class BoomerangTournament {
     public static final String INPUTDIR = "src/main/resources";
     public static final String OUTPUTDIR = "target/output";
     public static final String ROUND = "round1";
@@ -13,8 +13,8 @@ public class Homework {
      */
 
     private enum Input {
-        SAMPLE("A-sample.in", true),
-        INPUT("A-input.in", false);
+        SAMPLE("D-sample.in", true),
+        INPUT("D-input.in", false);
         
         private String fileName;
         private boolean useConsole;
@@ -124,14 +124,14 @@ public class Homework {
     public static void main(String[] args) {
         try {
             runTest(Input.SAMPLE);
-            runTest(Input.INPUT);
+            // runTest(Input.INPUT);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private static void runTest(Input input) throws Exception {
-        Homework problem = new Homework();
+        BoomerangTournament problem = new BoomerangTournament();
         IOUtils ioUtils = new IOUtilsImpl();
 
         ioUtils.init(input);
@@ -143,71 +143,68 @@ public class Homework {
      * Problem part
      */
 
-    private int[] primacity;
+    int n;
+    int[][] w;
 
     public void solve(IOUtils ioUtils) {
-        initPrimacity(10000000);
-
-        // 1 <= T <= 100
+        // 1 ≤ T ≤ 250
         int t = ioUtils.scanner().nextInt();
 
         for (int i = 1; i <= t; i++) {
-            // 2 <= A <= B <= 10^7
-            // 1 <= K <= 10^9
-            // Integer.MAX_VALUE = 2147483647
-            //                     1000000000
-            int a = ioUtils.scanner().nextInt();
-            int b = ioUtils.scanner().nextInt();
-            int k = ioUtils.scanner().nextInt();
-            ioUtils.writer().printf("Case #%1$d: %2$d\n", i, solve(a, b, k));
-        }
-    }
+            // N = 2^K, where K is an integer and 0 ≤ K ≤ 4
+            n = ioUtils.scanner().nextInt();
 
-    private void initPrimacity(int N) {
-        boolean[] isPrime = sieveOfEratosthenes(N);
-
-        primacity = new int[N+1];
-        for (int p = 2; p <= N; p++) {
-            if (!isPrime[p]) {
-                continue;
-            }
-            for (int i = p; i <= N; i += p) {
-                primacity[i]++;
-            }
-        }
-    }
-
-    private boolean[] sieveOfEratosthenes(int N) {
-        primacity = new int[N+1];
-
-        // initially assume all integers are prime
-        boolean[] isPrime = new boolean[N + 1];
-        for (int i = 2; i <= N; i++)
-            isPrime[i] = true;
-
-        // mark non-primes <= N using Sieve of Eratosthenes
-        for (int i = 2; i*i <= N; i++) {
-
-            // if i is prime, then mark multiples of i as nonprime
-            // suffices to consider mutiples i, i+1, ..., N/i
-            if (isPrime[i]) {
-                primacity[i]++;
-                for (int j = i; i*j <= N; j++) {
-                    isPrime[i*j] = false;
-                    primacity[i*j]++;
+            w = new int[n][n];
+            for (int a=0; a<n; a++) {
+                for (int b=0; b<n; b++) {
+                    w[a][b] = ioUtils.scanner().nextInt();
                 }
             }
+            ioUtils.writer().printf("Case #%1$d:\n", i);
+
+            solveInternal();
         }
-        return isPrime;
     }
 
-    private int solve(int a, int b, int k) {
-        int count = 0;
-        for(int i=a; i<=b; i++) {
-            if (primacity[i] == k)
-                count++;
+    private void solveInternal() {
+        for (int i=0; i<n; i++) {
+            Game game = new Game(i);
+            solveBrute(game);
         }
-        return count;
+    }
+
+    private void solveBrute(Game game) {
+        for (int i=0; i<n; i++) {
+            if (game.played.contains(i))
+                continue;
+
+            for (int j: game.played) {
+                game.results.add(new Result(i, j, w[i][j]));
+            }
+
+            game.played.add(i);
+            solveBrute(game);
+        }
+    }
+
+    private static class Result {
+        int i, j, w;
+
+        public Result(int i, int j, int w) {
+            this.i = i;
+            this.j = j;
+            this.w = w;
+        }
+    }
+
+    private static class Game {
+        Set<Integer> played;
+        List<Result> results = new LinkedList<>();
+
+        public Game(int started) {
+            played = new HashSet<>();
+            played.add(started);
+        }
     }
 }
 
