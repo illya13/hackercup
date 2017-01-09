@@ -4,7 +4,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import qualification.BoomerangConstellations;
 
 import java.io.*;
 
@@ -14,7 +13,7 @@ public class CookingTheBooksTest {
     private FileInputStream is;
     private OutputStream os;
 
-    private BoomerangConstellations problem;
+    private CookingTheBooks problem;
     private long time;
 
     @Before
@@ -37,7 +36,7 @@ public class CookingTheBooksTest {
     public void testSample() throws Exception {
         is = initInputStream("A-sample.in");
 
-        problem = new BoomerangConstellations(is, os);
+        problem = new CookingTheBooks(is, os);
         problem.solve();
         problem.close();
 

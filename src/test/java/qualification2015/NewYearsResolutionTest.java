@@ -4,7 +4,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import qualification.HighSecurity;
 
 import java.io.*;
 
@@ -14,7 +13,7 @@ public class NewYearsResolutionTest {
     private FileInputStream is;
     private OutputStream os;
 
-    private HighSecurity problem;
+    private NewYearsResolution problem;
     private long time;
 
     @Before
@@ -37,7 +36,7 @@ public class NewYearsResolutionTest {
     public void testSample() throws Exception {
         is = initInputStream("B-sample.in");
 
-        problem = new HighSecurity(is, os);
+        problem = new NewYearsResolution(is, os);
         problem.solve();
         problem.close();
 

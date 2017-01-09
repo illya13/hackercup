@@ -4,7 +4,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import qualification.ThePriceIsCorrect;
 
 import java.io.*;
 
@@ -14,7 +13,7 @@ public class LaserMazeTest {
     private FileInputStream is;
     private OutputStream os;
 
-    private ThePriceIsCorrect problem;
+    private LaserMaze problem;
     private long time;
 
     @Before
@@ -37,7 +36,7 @@ public class LaserMazeTest {
     public void testSample() throws Exception {
         is = initInputStream("C-sample.in");
 
-        problem = new ThePriceIsCorrect(is, os);
+        problem = new LaserMaze(is, os);
         problem.solve();
         problem.close();
 
