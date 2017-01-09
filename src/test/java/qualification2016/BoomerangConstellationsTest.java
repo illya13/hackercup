@@ -1,4 +1,4 @@
-package qualification;
+package qualification2016;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -7,13 +7,13 @@ import org.junit.Test;
 
 import java.io.*;
 
-public class ThePriceIsCorrectTest {
+public class BoomerangConstellationsTest {
     private static final String INPUTDIR = "src/main/resources/qualification";
 
     private FileInputStream is;
     private OutputStream os;
 
-    private ThePriceIsCorrect problem;
+    private BoomerangConstellations problem;
     private long time;
 
     @Before
@@ -34,18 +34,18 @@ public class ThePriceIsCorrectTest {
 
     @Test
     public void testSample() throws Exception {
-        is = initInputStream("C-sample.in");
+        is = initInputStream("A-sample.in");
 
-        problem = new ThePriceIsCorrect(is, os);
+        problem = new BoomerangConstellations(is, os);
         problem.solve();
         problem.close();
 
         Assert.assertEquals("" +
-                        "Case #1: 10\n" +
-                        "Case #2: 0\n" +
-                        "Case #3: 3\n" +
-                        "Case #4: 9\n" +
-                        "Case #5: 18\n",
+                "Case #1: 0\n" +
+                "Case #2: 4\n" +
+                "Case #3: 4\n" +
+                "Case #4: 3\n" +
+                "Case #5: 12\n",
                 os.toString());
     }
 

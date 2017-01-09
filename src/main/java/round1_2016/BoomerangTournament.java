@@ -1,21 +1,20 @@
-package round1;
+package round1_2016;
 
 import java.io.*;
-import java.util.Arrays;
-import java.util.Scanner;
+import java.util.*;
 
-public class CodingContestCreation {
+public class BoomerangTournament {
     public static final String INPUTDIR = "src/main/resources";
     public static final String OUTPUTDIR = "target/output";
-    public static final String ROUND = "round1";
+    public static final String ROUND = "round1_2016";
 
     /*
      * Input definition
      */
 
     private enum Input {
-        SAMPLE("A-sample.in", true),
-        INPUT("A-input.in", false);
+        SAMPLE("D-sample.in", true),
+        INPUT("D-input.in", false);
         
         private String fileName;
         private boolean useConsole;
@@ -125,14 +124,14 @@ public class CodingContestCreation {
     public static void main(String[] args) {
         try {
             runTest(Input.SAMPLE);
-            runTest(Input.INPUT);
+            // runTest(Input.INPUT);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private static void runTest(Input input) throws Exception {
-        CodingContestCreation problem = new CodingContestCreation();
+        BoomerangTournament problem = new BoomerangTournament();
         IOUtils ioUtils = new IOUtilsImpl();
 
         ioUtils.init(input);
@@ -144,63 +143,68 @@ public class CodingContestCreation {
      * Problem part
      */
 
+    int n;
+    int[][] w;
+
     public void solve(IOUtils ioUtils) {
-        // 1 ≤ T ≤ 50
+        // 1 ≤ T ≤ 250
         int t = ioUtils.scanner().nextInt();
 
         for (int i = 1; i <= t; i++) {
-            // 1 ≤ N ≤ 100,000
-            int n = ioUtils.scanner().nextInt();
+            // N = 2^K, where K is an integer and 0 ≤ K ≤ 4
+            n = ioUtils.scanner().nextInt();
 
-            // 1 ≤ Di ≤ 100
-            int[] d = new int[n];
-            for (int j=0; j<n; j++) {
-                d[j] = ioUtils.scanner().nextInt();
+            w = new int[n][n];
+            for (int a=0; a<n; a++) {
+                for (int b=0; b<n; b++) {
+                    w[a][b] = ioUtils.scanner().nextInt();
+                }
             }
-            ioUtils.writer().printf("Case #%1$d: %2$d\n", i, solve(d));
+            ioUtils.writer().printf("Case #%1$d:\n", i);
+
+            solveInternal();
         }
     }
 
-    private int solve(int[] d) {
-        int total = 0;
-        int current = 1;
-        for (int i=1; i<d.length; i++) {
-            if (current != 0) {
-                // start new series because of data
-                if (d[i] <= d[i - 1]) {
-                    total += 4 - current;
-                    current = 0;
-                }
-
-                // insert element
-                if (d[i] - d[i - 1] > 10) {
-                    d = newD(d, i);
-                    total++;
-                }
-            }
-
-            current++;
-
-            // start new series because current is full
-            if (current == 4) {
-                current = 0;
-            }
+    private void solveInternal() {
+        for (int i=0; i<n; i++) {
+            Game game = new Game(i);
+            solveBrute(game);
         }
-
-        if (current != 0) {
-            total += 4 - current;
-        }
-        return total;
     }
 
-    private int[] newD(int[] d, int i) {
-        int[] result = new int[d.length+1];
-        System.arraycopy(d, 0, result, 0, i);
+    private void solveBrute(Game game) {
+        for (int i=0; i<n; i++) {
+            if (game.played.contains(i))
+                continue;
 
-        result[i] = d[i-1] + 10;
+            for (int j: game.played) {
+                game.results.add(new Result(i, j, w[i][j]));
+            }
 
-        System.arraycopy(d, i, result, i + 1, d.length - i);
-        return result;
+            game.played.add(i);
+            solveBrute(game);
+        }
+    }
+
+    private static class Result {
+        int i, j, w;
+
+        public Result(int i, int j, int w) {
+            this.i = i;
+            this.j = j;
+            this.w = w;
+        }
+    }
+
+    private static class Game {
+        Set<Integer> played;
+        List<Result> results = new LinkedList<>();
+
+        public Game(int started) {
+            played = new HashSet<>();
+            played.add(started);
+        }
     }
 }
 

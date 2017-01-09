@@ -1,22 +1,21 @@
-package qualification;
+package qualification2016;
 
 import java.io.*;
-import java.math.BigInteger;
 import java.util.*;
 
-public class ThePriceIsCorrect {
+public class BoomerangConstellations {
     // general part
     private static final String INPUTDIR = "src/main/resources";
     private static final String OUTPUTDIR = "target/output";
     private static final String ROUND = "qualification";
 
-    private static final String SAMPLE = "C-sample.in";
-    private static final String INPUT = "C-input.in";
+    private static final String SAMPLE = "A-sample.in";
+    private static final String INPUT = "A-input.in";
 
     private Scanner scanner;
     private PrintWriter writer;
 
-    public ThePriceIsCorrect(InputStream is, OutputStream os) {
+    public BoomerangConstellations(InputStream is, OutputStream os) {
         scanner = new Scanner(is);
         writer = new PrintWriter(os);
     }
@@ -30,7 +29,7 @@ public class ThePriceIsCorrect {
         InputStream is = initInputStream(fileName);
         OutputStream os = initOutputStream(fileName, isConsole);
 
-        ThePriceIsCorrect problem = new ThePriceIsCorrect(is, os);
+        BoomerangConstellations problem = new BoomerangConstellations(is, os);
         problem.solve();
         problem.close();
 
@@ -84,46 +83,76 @@ public class ThePriceIsCorrect {
      * Solve the problem
      */
     public void solve() {
-        // 1 <= T <= 40
+        // 1 ≤ T ≤ 50
         int t = scanner.nextInt();
+        scanner.nextLine();
 
         for (int i = 1; i <= t; i++) {
-            // 1 ≤ N ≤ 100,000
+            // 0 <= N <= 2000
             int n = scanner.nextInt();
-
-            // 1 ≤ P ≤ 1,000,000,000
-            // Integer.MAX_VALUE == ‭2,147,483,647‬
-            int p = scanner.nextInt();
-
-            int[] b = new int[n];
+            Star[] stars = new Star[n];
             for (int j = 0; j < n; j++) {
-                b[j] = scanner.nextInt();
+                int x = scanner.nextInt();
+                int y = scanner.nextInt();
+                stars[j] = new Star(x, y);
             }
-            writer.printf("Case #%1$d: %2$d\n", i, solve(b, n, p));
+            writer.printf("Case #%1$d: %2$d\n", i, solve(stars));
         }
     }
 
-    private long solve(int[] b, int n, int p) {
-        // max value: n*(n/2)
+    private long solve(Star[] stars) {
+        // max value: 2000 * (max c_n2)
         long count = 0;
 
-        for (int i=0; i<n; i++) {
-            if (b[i] > p) {
-                continue;
+        // for each star
+        for (int a = 0; a < stars.length; a++) {
+            // collect map:
+            //      segment length -> count
+            Map<Long, Integer> lenghtMap = new HashMap<>();
+
+            for (int b = 0; b < stars.length; b++) {
+                if (a == b)
+                    continue;
+
+                long distance = stars[a].getSquareDistanceTo(stars[b]);
+                Integer segments = lenghtMap.get(distance);
+                if (segments == null) {
+                    segments = 0;
+                }
+                lenghtMap.put(distance, ++segments);
             }
 
-            int[] sum = new int[n];
-            sum[i] = b[i];
-
-            count += n-i;
-            for (int j=i+1; j<n; j++) {
-                sum[j] = sum[j-1] + b[j];
-                if (sum[j] > p) {
-                    count -= n-j;
-                    break;
-                }
+            for (Map.Entry<Long, Integer> entry: lenghtMap.entrySet()) {
+                int segments = entry.getValue();
+                count += c_n2(segments);
             }
         }
         return count;
     }
+
+    // max n = 2000
+    // mas c_n2 = 2000 * 1000
+    private long c_n2(int n) {
+        return n * (n-1) / 2;
+    }
+
+    private class Star {
+        private int x, y;
+
+        public Star(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        @Override
+        public String toString() {
+            return "(" + x +
+                    "," + y + ')';
+        }
+
+        public long getSquareDistanceTo(Star s) {
+            return (x-s.x)*(x-s.x) + (y-s.y)*(y-s.y);
+        }
+    }
 }
+

@@ -1,4 +1,4 @@
-package qualification;
+package qualification2016;
 
 import java.io.*;
 import java.util.*;

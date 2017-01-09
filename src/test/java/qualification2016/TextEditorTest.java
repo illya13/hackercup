@@ -1,4 +1,4 @@
-package qualification;
+package qualification2016;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -7,13 +7,13 @@ import org.junit.Test;
 
 import java.io.*;
 
-public class HighSecurityTest {
+public class TextEditorTest {
     private static final String INPUTDIR = "src/main/resources/qualification";
 
     private FileInputStream is;
     private OutputStream os;
 
-    private HighSecurity problem;
+    private TextEditor problem;
     private long time;
 
     @Before
@@ -34,18 +34,18 @@ public class HighSecurityTest {
 
     @Test
     public void testSample() throws Exception {
-        is = initInputStream("B-sample.in");
+        is = initInputStream("D-sample.in");
 
-        problem = new HighSecurity(is, os);
+        problem = new TextEditor(is, os);
         problem.solve();
         problem.close();
 
         Assert.assertEquals("" +
-                        "Case #1: 3\n" +
-                        "Case #2: 3\n" +
-                        "Case #3: 2\n" +
-                        "Case #4: 5\n" +
-                        "Case #5: 6\n",
+                        "Case #1: 9\n" +
+                        "Case #2: 9\n" +
+                        "Case #3: 11\n" +
+                        "Case #4: 15\n" +
+                        "Case #5: 26\n",
                 os.toString());
     }
 

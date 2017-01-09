@@ -1,20 +1,20 @@
-package round1;
+package round1_2016;
 
 import java.io.*;
-import java.util.*;
+import java.util.Scanner;
 
-public class Yachtzee {
+public class CodingContestCreation {
     public static final String INPUTDIR = "src/main/resources";
     public static final String OUTPUTDIR = "target/output";
-    public static final String ROUND = "round1";
+    public static final String ROUND = "round1_2016";
 
     /*
      * Input definition
      */
 
     private enum Input {
-        SAMPLE("C-sample.in", true),
-        INPUT("C-input.in", false);
+        SAMPLE("A-sample.in", true),
+        INPUT("A-input.in", false);
         
         private String fileName;
         private boolean useConsole;
@@ -131,7 +131,7 @@ public class Yachtzee {
     }
 
     private static void runTest(Input input) throws Exception {
-        Yachtzee problem = new Yachtzee();
+        CodingContestCreation problem = new CodingContestCreation();
         IOUtils ioUtils = new IOUtilsImpl();
 
         ioUtils.init(input);
@@ -151,120 +151,55 @@ public class Yachtzee {
             // 1 ≤ N ≤ 100,000
             int n = ioUtils.scanner().nextInt();
 
-            // 0 ≤ A < B ≤ 1,000,000,000
-            int a = ioUtils.scanner().nextInt();
-            int b = ioUtils.scanner().nextInt();
-
-            int[] c = new int[n];
+            // 1 ≤ Di ≤ 100
+            int[] d = new int[n];
             for (int j=0; j<n; j++) {
-                // 1 ≤ Ci ≤ 1,000,000,000
-                c[j] = ioUtils.scanner().nextInt();
+                d[j] = ioUtils.scanner().nextInt();
             }
-            ioUtils.writer().printf("Case #%1$d: %2$.9f\n", i, solve(n, a, b, c));
+            ioUtils.writer().printf("Case #%1$d: %2$d\n", i, solve(d));
         }
     }
 
-    private double solve(int n, int a, int b, int[] c) {
-        boolean first = false;
+    private int solve(int[] d) {
+        int total = 0;
+        int current = 1;
+        for (int i=1; i<d.length; i++) {
+            if (current != 0) {
+                // start new series because of data
+                if (d[i] <= d[i - 1]) {
+                    total += 4 - current;
+                    current = 0;
+                }
 
-        Map<Interval, Integer> intervals = new HashMap<>(n);
-
-        int dollars = 0;
-        int index = 0;
-
-        int prev = -1;
-        while (dollars <= b) {
-            if (dollars > a) {
-                if (!first) {
-                    add(intervals, new Interval(a - (dollars - prev), prev));
-                    first = true;
-                } else {
-                    add(intervals, new Interval(0, prev));
+                // insert element
+                if (d[i] - d[i - 1] > 10) {
+                    d = newD(d, i);
+                    total++;
                 }
             }
 
-            dollars += c[index];
-            prev = c[index];
+            current++;
 
-            index++;
-            if (index == n) {
-                index = 0;
+            // start new series because current is full
+            if (current == 4) {
+                current = 0;
             }
         }
 
-        if (dollars > b) {
-            if (b < c[0]) {
-                add(intervals, new Interval(a, b - (dollars - prev)));
-            } else {
-                add(intervals, new Interval(0, b - (dollars - prev)));
-            }
+        if (current != 0) {
+            total += 4 - current;
         }
-
-        double weight = 0;
-        double length = 0;
-        for (Map.Entry<Interval, Integer> entry : intervals.entrySet()) {
-            weight += entry.getKey().getWeight() * entry.getValue();
-            length += entry.getKey().getLength() * entry.getValue();
-        }
-        return weight / length;
+        return total;
     }
 
-    private void add(Map<Interval, Integer> intervals, Interval interval) {
-        if (interval.getLength() == 0)
-            return;
+    private int[] newD(int[] d, int i) {
+        int[] result = new int[d.length+1];
+        System.arraycopy(d, 0, result, 0, i);
 
-        Integer integer = intervals.get(interval);
-        if (integer == null) {
-            integer = 0;
-        }
-        integer++;
-        intervals.put(interval, integer);
-    }
+        result[i] = d[i-1] + 10;
 
-    private static class Interval {
-        int start, end;
-
-        public Interval(int start, int end) {
-            this.start = start;
-            this.end = end;
-        }
-
-        public double getWeight() {
-            return getAvgValue() * getLength();
-        }
-
-        public double getAvgValue() {
-            return (0.0 + start + end) / 2;
-        }
-
-        public double getLength() {
-            return end - start;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof Interval)) return false;
-
-            Interval interval = (Interval) o;
-
-            if (start != interval.start) return false;
-            return end == interval.end;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = start;
-            result = 31 * result + end;
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "[" + start +
-                    "," + end +
-                    ") " + getWeight();
-        }
+        System.arraycopy(d, i, result, i + 1, d.length - i);
+        return result;
     }
 }
 

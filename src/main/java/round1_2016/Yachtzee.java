@@ -1,20 +1,20 @@
-package round1;
+package round1_2016;
 
 import java.io.*;
 import java.util.*;
 
-public class BoomerangTournament {
+public class Yachtzee {
     public static final String INPUTDIR = "src/main/resources";
     public static final String OUTPUTDIR = "target/output";
-    public static final String ROUND = "round1";
+    public static final String ROUND = "round1_2016";
 
     /*
      * Input definition
      */
 
     private enum Input {
-        SAMPLE("D-sample.in", true),
-        INPUT("D-input.in", false);
+        SAMPLE("C-sample.in", true),
+        INPUT("C-input.in", false);
         
         private String fileName;
         private boolean useConsole;
@@ -124,14 +124,14 @@ public class BoomerangTournament {
     public static void main(String[] args) {
         try {
             runTest(Input.SAMPLE);
-            // runTest(Input.INPUT);
+            runTest(Input.INPUT);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private static void runTest(Input input) throws Exception {
-        BoomerangTournament problem = new BoomerangTournament();
+        Yachtzee problem = new Yachtzee();
         IOUtils ioUtils = new IOUtilsImpl();
 
         ioUtils.init(input);
@@ -143,67 +143,127 @@ public class BoomerangTournament {
      * Problem part
      */
 
-    int n;
-    int[][] w;
-
     public void solve(IOUtils ioUtils) {
-        // 1 ≤ T ≤ 250
+        // 1 ≤ T ≤ 50
         int t = ioUtils.scanner().nextInt();
 
         for (int i = 1; i <= t; i++) {
-            // N = 2^K, where K is an integer and 0 ≤ K ≤ 4
-            n = ioUtils.scanner().nextInt();
+            // 1 ≤ N ≤ 100,000
+            int n = ioUtils.scanner().nextInt();
 
-            w = new int[n][n];
-            for (int a=0; a<n; a++) {
-                for (int b=0; b<n; b++) {
-                    w[a][b] = ioUtils.scanner().nextInt();
+            // 0 ≤ A < B ≤ 1,000,000,000
+            int a = ioUtils.scanner().nextInt();
+            int b = ioUtils.scanner().nextInt();
+
+            int[] c = new int[n];
+            for (int j=0; j<n; j++) {
+                // 1 ≤ Ci ≤ 1,000,000,000
+                c[j] = ioUtils.scanner().nextInt();
+            }
+            ioUtils.writer().printf("Case #%1$d: %2$.9f\n", i, solve(n, a, b, c));
+        }
+    }
+
+    private double solve(int n, int a, int b, int[] c) {
+        boolean first = false;
+
+        Map<Interval, Integer> intervals = new HashMap<>(n);
+
+        int dollars = 0;
+        int index = 0;
+
+        int prev = -1;
+        while (dollars <= b) {
+            if (dollars > a) {
+                if (!first) {
+                    add(intervals, new Interval(a - (dollars - prev), prev));
+                    first = true;
+                } else {
+                    add(intervals, new Interval(0, prev));
                 }
             }
-            ioUtils.writer().printf("Case #%1$d:\n", i);
 
-            solveInternal();
-        }
-    }
+            dollars += c[index];
+            prev = c[index];
 
-    private void solveInternal() {
-        for (int i=0; i<n; i++) {
-            Game game = new Game(i);
-            solveBrute(game);
-        }
-    }
-
-    private void solveBrute(Game game) {
-        for (int i=0; i<n; i++) {
-            if (game.played.contains(i))
-                continue;
-
-            for (int j: game.played) {
-                game.results.add(new Result(i, j, w[i][j]));
+            index++;
+            if (index == n) {
+                index = 0;
             }
-
-            game.played.add(i);
-            solveBrute(game);
         }
+
+        if (dollars > b) {
+            if (b < c[0]) {
+                add(intervals, new Interval(a, b - (dollars - prev)));
+            } else {
+                add(intervals, new Interval(0, b - (dollars - prev)));
+            }
+        }
+
+        double weight = 0;
+        double length = 0;
+        for (Map.Entry<Interval, Integer> entry : intervals.entrySet()) {
+            weight += entry.getKey().getWeight() * entry.getValue();
+            length += entry.getKey().getLength() * entry.getValue();
+        }
+        return weight / length;
     }
 
-    private static class Result {
-        int i, j, w;
+    private void add(Map<Interval, Integer> intervals, Interval interval) {
+        if (interval.getLength() == 0)
+            return;
 
-        public Result(int i, int j, int w) {
-            this.i = i;
-            this.j = j;
-            this.w = w;
+        Integer integer = intervals.get(interval);
+        if (integer == null) {
+            integer = 0;
         }
+        integer++;
+        intervals.put(interval, integer);
     }
 
-    private static class Game {
-        Set<Integer> played;
-        List<Result> results = new LinkedList<>();
+    private static class Interval {
+        int start, end;
 
-        public Game(int started) {
-            played = new HashSet<>();
-            played.add(started);
+        public Interval(int start, int end) {
+            this.start = start;
+            this.end = end;
+        }
+
+        public double getWeight() {
+            return getAvgValue() * getLength();
+        }
+
+        public double getAvgValue() {
+            return (0.0 + start + end) / 2;
+        }
+
+        public double getLength() {
+            return end - start;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Interval)) return false;
+
+            Interval interval = (Interval) o;
+
+            if (start != interval.start) return false;
+            return end == interval.end;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = start;
+            result = 31 * result + end;
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "[" + start +
+                    "," + end +
+                    ") " + getWeight();
         }
     }
 }

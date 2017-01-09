@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class Autocomplete {
     public static final String INPUTDIR = "src/main/resources";
     public static final String OUTPUTDIR = "target/output";
-    public static final String ROUND = "round1";
+    public static final String ROUND = "round1_2016";
 
     /*
      * Input definition
